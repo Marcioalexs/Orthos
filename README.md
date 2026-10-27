@@ -9,23 +9,26 @@
 ---
 
 ## Como executar
-1. Clone o repositório:
+1. Clone o repositório ou faça um forke:
    ```bash
    git clone https://github.com/carlosmandele/Orthos.git
    cd Orthos
 
+2. Na raiz do projeto, crie e ative um ambiente virtual:
+   ```bash
+   py -3.13 -m venv env    # Cria o ambiente
+   .\env\Scripts\Activate.ps1  # Ativar o ambiente
 
-2. Instale as dependências:
-
+3. Instale as dependências:
    ```bash
    pip install -r requirements.txt
 
-3. Configure sua chave de API
+4. Configure sua chave de API
    ```bash
    export API_KEY="sua_apikey_aqui"
 
-4. Execute o script principal de interação com o LLM:
+5. Execute o script principal de interação com o LLM (agente):
    ```bash
-   python orthus.py
+   streamlit run orthus.py
 
 ----
