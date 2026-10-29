@@ -81,6 +81,10 @@ class OpenRouterQuotaError(RuntimeError):
     """OpenRouter reported a request/credit limit; serve cited local materials."""
 
 
+class OpenRouterInvalidOutput(RuntimeError):
+    """Resposta do provedor nao e explicacao educativa aproveitavel."""
+
+
 def local_materials(materials: list, notice: str) -> str:
     """Show retrieved evidence without pretending that an LLM generated the text."""
     excerpts = "\n\n".join(
@@ -181,9 +185,44 @@ def llm_answer(question: str, level: str, materials: list, history: list) -> str
         raise RuntimeError(f"Falha HTTP no provedor de IA ({ex.code})") from None
     except (error.URLError, TimeoutError):
         raise RuntimeError("Falha de rede ou tempo esgotado na API") from None
-    content = response["choices"][0]["message"]["content"]
-    if not isinstance(content,str) or not content.strip():
-        raise RuntimeError("O modelo retornou uma resposta vazia")
+    # Registra apenas metadados tecnicos permitidos, NUNCA prompts, conteudo ou chave.
+    choices = response.get("choices") if isinstance(response, dict) else None
+    if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+        logging.getLogger(__name__).warning("openrouter_formato_invalido")
+        raise OpenRouterInvalidOutput("O provedor nao retornou uma resposta valida.")
+    choice = choices[0]
+    msg = choice.get("message") or {}
+    content = msg.get("content") if isinstance(msg, dict) else None
+    selected_model = re.sub(r"[^a-zA-Z0-9_./:-]", "", str(response.get("model", "nao_informado")))[:120]
+    finish_reason = re.sub(r"[^a-zA-Z0-9_-]", "", str(choice.get("finish_reason", "nao_informado")))[:40]
+
+    if finish_reason in {"error", "content_filter"}:
+        logging.getLogger(__name__).warning(
+            "openrouter_resposta_interrompida modelo=%s finish_reason=%s",
+            selected_model, finish_reason,
+        )
+        raise OpenRouterInvalidOutput("O modelo nao concluiu a explicacao solicitada.")
+
+    if not isinstance(content, str) or not content.strip():
+        logging.getLogger(__name__).warning(
+            "openrouter_resposta_vazia modelo=%s finish_reason=%s",
+            selected_model, finish_reason,
+        )
+        raise OpenRouterInvalidOutput("O modelo retornou uma resposta vazia.")
+
+    # Alguns roteamentos de openrouter/free podem selecionar modelos de
+    # classificacao de seguranca. Essa saida nao e uma resposta didatica.
+    if re.fullmatch(
+        r"(?:\s*(?:User|Response)\s+Safety\s*:\s*(?:safe|unsafe)\s*)+",
+        content.strip(),
+        flags=re.IGNORECASE,
+    ):
+        logging.getLogger(__name__).warning(
+            "openrouter_classificador_inadequado modelo=%s finish_reason=%s",
+            selected_model, finish_reason,
+        )
+        raise OpenRouterInvalidOutput("O provedor selecionou uma resposta de classificacao, nao uma explicacao.")
+
     return content
 
 
@@ -208,9 +247,16 @@ def answer(question: str, competency: str, level: str="Iniciante", history=None)
             output=llm_answer(question,level,data,history or [])
             mode="llm_rag"
         except OpenRouterQuotaError as exc:
-            # Do not generate another API call or invent a model response.
+            # Nao faz nova chamada a API; usa os materiais recuperados.
             output = local_materials(data, str(exc))
             mode = "base_local_limite"
+        except OpenRouterInvalidOutput as exc:
+            output = local_materials(
+                data,
+                "⚠️ A IA nao forneceu uma explicacao valida nesta tentativa. "
+                "O material abaixo vem diretamente da base do StudyAgent."
+            )
+            mode = "base_local_resposta_invalida"
         except RuntimeError as exc:
             # Authentication/configuration faults must remain visible to the operator.
             raise RuntimeError(str(exc)) from None
