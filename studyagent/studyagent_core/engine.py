@@ -5,6 +5,7 @@ MVP educational only. No server-side student data persistence.
 from __future__ import annotations
 
 import json
+import logging
 import os
 import re
 import unicodedata
@@ -135,10 +136,48 @@ def llm_answer(question: str, level: str, materials: list, history: list) -> str
         if ex.code == 404:
             raise RuntimeError("Modelo OpenRouter não disponível; confira OPENROUTER_MODEL") from None
         if ex.code == 429:
-            raise OpenRouterQuotaError(
-                "⚠️ Limite de utilização gratuita da IA atingido ou provedor "
-                "temporariamente sobrecarregado (HTTP 429). Tente novamente mais tarde."
-            ) from None
+            # Registra indicadores técnicos seguros no log da Vercel.
+            # Não registra API key, conteúdo da conversa nem texto bruto do provedor.
+            try:
+                error_body = json.loads(ex.read(4096).decode("utf-8", errors="replace"))
+                detail = error_body.get("error", {}) if isinstance(error_body, dict) else {}
+                if not isinstance(detail, dict):
+                    detail = {}
+            except (ValueError, UnicodeError, OSError):
+                detail = {}
+            metadata = detail.get("metadata", {})
+            if not isinstance(metadata, dict):
+                metadata = {}
+            error_message = str(detail.get("message", "")).lower()
+            provider_code = metadata.get("provider_code")
+            provider_limited = bool(provider_code) or "provider returned error" in error_message
+            error_type = re.sub(r"[^a-zA-Z0-9_-]", "", str(metadata.get("error_type", "")))[:60]
+            def safe_header(name):
+                return re.sub(r"[^a-zA-Z0-9_.:-]", "", str(ex.headers.get(name, "")))[:80]
+            remaining = safe_header("X-RateLimit-Remaining")
+            retry_after = safe_header("Retry-After")
+            reset = safe_header("X-RateLimit-Reset")
+            logging.getLogger(__name__).warning(
+                "openrouter_http_429 origem_provedor=%s tipo=%s restante=%s retry_after=%s reset=%s",
+                provider_limited, error_type or "nao_informado",
+                remaining or "nao_informado", retry_after or "nao_informado", reset or "nao_informado"
+            )
+            if provider_limited:
+                notice = (
+                    "⚠️ Um provedor gratuito do OpenRouter limitou temporariamente esta requisição "
+                    "(HTTP 429). Isso não comprova que sua cota diária acabou."
+                )
+            elif remaining == "0":
+                notice = (
+                    "⚠️ O OpenRouter informou limite de requisições atingido "
+                    "(HTTP 429). Consulte a cota e o horário de renovação da conta."
+                )
+            else:
+                notice = (
+                    "⚠️ O OpenRouter retornou HTTP 429 (limite de utilização ou capacidade). "
+                    "Verifique os logs do servidor para identificar a origem."
+                )
+            raise OpenRouterQuotaError(notice) from None
         raise RuntimeError(f"Falha HTTP no provedor de IA ({ex.code})") from None
     except (error.URLError, TimeoutError):
         raise RuntimeError("Falha de rede ou tempo esgotado na API") from None
