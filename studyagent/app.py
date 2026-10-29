@@ -4,8 +4,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from studyagent_core.engine import COMPETENCIAS, docs, answer, quiz_public, grade
 from studyagent_core.knowledge_graph import public_graph, learning_path, suggest_review
@@ -73,8 +73,13 @@ def get_learning_path(conceito: str):
         raise HTTPException(status_code=404, detail=str(exc)) from None
 
 @app.get("/mapa", include_in_schema=False)
-def knowledge_map():
-    return FileResponse(ROOT / "public" / "mapa.html")
+def knowledge_map(request: Request):
+    mapa_file = ROOT / "public" / "mapa.html"
+    if mapa_file.is_file():
+        return FileResponse(mapa_file)
+    # Vercel disponibiliza public/mapa.html diretamente pela CDN.
+    query_suffix = f"?{request.url.query}" if request.url.query else ""
+    return RedirectResponse(url=f"/mapa.html{query_suffix}", status_code=307)
 
 @app.get("/",include_in_schema=False)
 def home():
