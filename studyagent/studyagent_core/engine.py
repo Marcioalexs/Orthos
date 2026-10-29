@@ -76,6 +76,25 @@ As referências serão mostradas pelo sistema separadamente, não é necessário
 """
 
 
+class OpenRouterQuotaError(RuntimeError):
+    """OpenRouter reported a request/credit limit; serve cited local materials."""
+
+
+def local_materials(materials: list, notice: str) -> str:
+    """Show retrieved evidence without pretending that an LLM generated the text."""
+    excerpts = "\n\n".join(
+        f"{index}. {item['titulo']}\n{item['texto']}"
+        for index, item in enumerate(materials, start=1)
+    )
+    return (
+        notice
+        + "\n\nEnquanto isso, seguem os materiais recuperados da base de conhecimentos "
+          "do StudyAgent. Eles NÃO são uma resposta gerada pela IA. "
+          "As referências aparecem abaixo da mensagem."
+        + "\n\n" + excerpts
+    )
+
+
 def llm_answer(question: str, level: str, materials: list, history: list) -> str:
     api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
     if not api_key:
@@ -98,14 +117,28 @@ def llm_answer(question: str, level: str, materials: list, history: list) -> str
         with request.urlopen(req, timeout=23) as result:
             response = json.load(result)
     except error.HTTPError as ex:
-        if ex.code in (401,403):
-            raise RuntimeError("O OpenRouter recusou a chave de acesso") from None
+        if ex.code == 401:
+            raise RuntimeError(
+                "Chave OpenRouter inválida ou não reconhecida (HTTP 401). "
+                "Confira OPENROUTER_API_KEY na Vercel e faça um novo deploy após alterá-la."
+            ) from None
+        if ex.code == 403:
+            raise RuntimeError(
+                "Acesso ao OpenRouter ou ao modelo não autorizado (HTTP 403). "
+                "Confira as permissões da conta e do modelo."
+            ) from None
         if ex.code == 402:
-            raise RuntimeError("O OpenRouter informou saldo ou cota insuficiente para essa requisicao") from None
+            raise OpenRouterQuotaError(
+                "⚠️ O OpenRouter informou saldo ou cota insuficiente para esta solicitação "
+                "(HTTP 402). A geração por IA está temporariamente indisponível."
+            ) from None
         if ex.code == 404:
-            raise RuntimeError("Modelo OpenRouter nao disponivel; confira OPENROUTER_MODEL") from None
+            raise RuntimeError("Modelo OpenRouter não disponível; confira OPENROUTER_MODEL") from None
         if ex.code == 429:
-            raise RuntimeError("Limite de chamadas do OpenRouter atingido; tente mais tarde") from None
+            raise OpenRouterQuotaError(
+                "⚠️ Limite de utilização gratuita da IA atingido ou provedor "
+                "temporariamente sobrecarregado (HTTP 429). Tente novamente mais tarde."
+            ) from None
         raise RuntimeError(f"Falha HTTP no provedor de IA ({ex.code})") from None
     except (error.URLError, TimeoutError):
         raise RuntimeError("Falha de rede ou tempo esgotado na API") from None
@@ -135,12 +168,19 @@ def answer(question: str, competency: str, level: str="Iniciante", history=None)
         try:
             output=llm_answer(question,level,data,history or [])
             mode="llm_rag"
+        except OpenRouterQuotaError as exc:
+            # Do not generate another API call or invent a model response.
+            output = local_materials(data, str(exc))
+            mode = "base_local_limite"
         except RuntimeError as exc:
+            # Authentication/configuration faults must remain visible to the operator.
             raise RuntimeError(str(exc)) from None
     else:
-        paragraphs="\n\n".join("**"+d["titulo"]+"**\n"+d["texto"] for d in data)
-        output="**Modo demonstração (sem LLM configurado).** Conteúdo recuperado da base:\n\n"+paragraphs+"\n\nPara explicações personalizadas via IA, configure OPENROUTER_API_KEY no servidor."
-        mode="base_local"
+        output = local_materials(
+            data,
+            "ℹ️ Modo demonstração: nenhuma chave de IA configurada no servidor."
+        )
+        mode = "base_local"
     return {"resposta":output,"fontes":refs,"assuntos":[d["assunto"] for d in data],"modo":mode,"consulta":"buscar_conhecimento"}
 
 
