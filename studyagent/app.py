@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from studyagent_core.engine import COMPETENCIAS, docs, answer, quiz_public, grade
+from studyagent_core.knowledge_graph import public_graph, learning_path, suggest_review
 
 load_dotenv()  # Carrega studyagent/.env no desenvolvimento local; não substitui variáveis reais.
 app = FastAPI(title="StudyAgent Orthos MVP", version="1.0.0")
@@ -54,9 +55,26 @@ def get_quiz(competencia: str):
 @app.post("/api/avaliar")
 def assess(payload:Assessment):
     try:
-        return grade(payload.competencia,payload.respostas)
+        result = grade(payload.competencia, payload.respostas)
+        result["revisar"] = suggest_review(payload.competencia, payload.respostas)
+        return result
     except ValueError as exc:
         raise HTTPException(status_code=400,detail=str(exc)) from None
+
+@app.get("/api/grafo")
+def get_knowledge_graph():
+    return public_graph()
+
+@app.get("/api/trilha/{conceito}")
+def get_learning_path(conceito: str):
+    try:
+        return learning_path(conceito)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+
+@app.get("/mapa", include_in_schema=False)
+def knowledge_map():
+    return FileResponse(ROOT / "public" / "mapa.html")
 
 @app.get("/",include_in_schema=False)
 def home():
