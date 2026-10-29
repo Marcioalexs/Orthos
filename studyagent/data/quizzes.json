@@ -1,0 +1,30 @@
+{
+ "agentes": [
+  {"pergunta":"Qual dado um agente reflexo simples usa para decidir?","opcoes":["Somente a percepção atual","Obrigatoriamente um histórico completo","Sempre uma rede neural","Apenas a opinião do usuário"],"correta":0,"explicacao":"Ele aplica regras à percepção atual, sem estado interno do ambiente."},
+  {"pergunta":"O que diferencia um agente baseado em modelo?","opcoes":["Não utiliza sensores","Mantém um estado interno do ambiente","Sempre possui internet","Gera imagens"],"correta":1,"explicacao":"O modelo interno permite usar informações não observadas diretamente naquele instante."},
+  {"pergunta":"Qual é um exemplo de colaboração no Orthos?","opcoes":["Dois aplicativos sem interação","Um agente gera observações e outro interpreta","Uma página HTML sozinha","Um cronômetro sem dados"],"correta":1,"explicacao":"Há divisão de responsabilidades e troca estruturada de informações."},
+  {"pergunta":"Qual prática ajuda a integrar agentes com segurança?","opcoes":["Ignorar erros de sensor","Definir contrato de dados e tratamento de incerteza","Desativar testes","Enviar dados pessoais sem consentimento"],"correta":1,"explicacao":"Contratos e tratamento de falhas evitam interpretações indevidas."},
+  {"pergunta":"Um agente inteligente precisa necessariamente de LLM?","opcoes":["Sim","Somente se usar Python","Não","Somente se tiver memória"],"correta":2,"explicacao":"Agentes reflexos podem funcionar com regras e percepções sem LLM."}
+ ],
+ "visao": [
+  {"pergunta":"O que são landmarks na estimativa de pose?","opcoes":["Pontos-chave estimados do corpo","Receitas médicas","Chaves de API","Erros de sintaxe"],"correta":0,"explicacao":"Landmarks correspondem a pontos corporais estimados pelo modelo."},
+  {"pergunta":"Qual fator pode prejudicar a detecção?","opcoes":["Boa iluminação","Oclusão de parte do corpo","Imagem bem enquadrada","Câmera estável"],"correta":1,"explicacao":"Partes do corpo ocultas reduzem a informação visual disponível."},
+  {"pergunta":"Um landmark detectado comprova lesão?","opcoes":["Sim, sempre","Somente no trabalho","Não, é uma estimativa visual","Sim, se houver 33 pontos"],"correta":2,"explicacao":"Estimativa de pose não constitui diagnóstico clínico."},
+  {"pergunta":"Qual ferramenta foi estudada para pontos corporais?","opcoes":["Git Bash","MediaPipe Pose Landmarker","SQLite","Pandas DataFrame"],"correta":1,"explicacao":"MediaPipe Pose Landmarker fornece estimativas de pontos corporais."},
+  {"pergunta":"O que fazer se a câmera não permitir observar corretamente?","opcoes":["Inventar posição","Apresentar certeza total","Reconhecer limitação e evitar conclusão indevida","Ignorar o usuário"],"correta":2,"explicacao":"A abstenção é adequada diante de evidência insuficiente."}
+ ],
+ "llms": [
+  {"pergunta":"Qual é o papel do RAG?","opcoes":["Recuperar conteúdo para fundamentar geração","Garantir 100% de acerto","Substituir bibliografia","Treinar sempre um modelo do zero"],"correta":0,"explicacao":"RAG recupera documentos e os fornece como contexto ao LLM."},
+  {"pergunta":"Onde deve ficar uma chave de API?","opcoes":["No JavaScript público","Em variável de ambiente no servidor","No README público","Dentro das perguntas do usuário"],"correta":1,"explicacao":"A chave deve ficar protegida no backend ou gerenciador de segredos."},
+  {"pergunta":"Uma resposta fluente de LLM é sempre correta?","opcoes":["Sim","Somente se for longa","Não","Somente se citar Wikipedia"],"correta":2,"explicacao":"Modelos podem gerar texto plausível e incorreto."},
+  {"pergunta":"O que são tokens, de forma simplificada?","opcoes":["Unidades de texto processadas pelo modelo","Sensores ópticos","Bancos SQL","Tipos de câmeras"],"correta":0,"explicacao":"O modelo processa sequências de tokens, que não correspondem necessariamente a palavras inteiras."},
+  {"pergunta":"Como agir quando não há fonte recuperada?","opcoes":["Inventar uma citação","Explicitar insuficiência de evidência","Omitir a limitação","Afirmar certeza"],"correta":1,"explicacao":"É necessário informar a limitação sem fabricar referências."}
+ ],
+ "ml": [
+  {"pergunta":"O aprendizado supervisionado requer exemplos com...","opcoes":["Entradas e rótulos esperados","Apenas telas HTML","Somente textos sem estrutura","Nenhuma avaliação"],"correta":0,"explicacao":"Dados rotulados fornecem o alvo do treinamento supervisionado."},
+  {"pergunta":"Classificação normalmente prevê...","opcoes":["Somente números contínuos","Classes ou categorias","Arquivos PDF","Páginas na internet"],"correta":1,"explicacao":"Classificação estima categorias; regressão estima valores numéricos."},
+  {"pergunta":"Overfitting significa...","opcoes":["Melhor generalização automática","Ausência de dados","Ajuste excessivo ao treino e pior generalização","O mesmo que validação"],"correta":2,"explicacao":"O modelo aprende padrões específicos do treino que não generalizam bem."},
+  {"pergunta":"Para que serve um conjunto de teste separado?","opcoes":["Avaliar desempenho em dados não usados no ajuste","Substituir treinamento","Guardar senhas","Gerar imagens"],"correta":0,"explicacao":"Permite estimar desempenho fora dos dados utilizados para ajustar o modelo."},
+  {"pergunta":"Precision e recall são úteis especialmente em...","opcoes":["Problemas de classificação","Formatação CSS","Controle de versão","Montagem de slides"],"correta":0,"explicacao":"Medem diferentes tipos de acerto/erro em classificação."}
+ ]
+}
