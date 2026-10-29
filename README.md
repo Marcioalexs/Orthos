@@ -54,6 +54,9 @@ Com o ambiente virtual ativado, execute:
 python -m pip install --upgrade pip
 pip install streamlit langchain-core langchain-openai langgraph python-dotenv
 pip install pypdf python-docx
+
+pip install langchain-community langchain-text-splitters langchain-chroma langchain-huggingface sentence-transformers
+
 ```
 
 Se o projeto já possuir um arquivo `requirements.txt` atualizado com todas as dependências necessárias, use:
@@ -65,10 +68,16 @@ pip install -r requirements.txt
 ### 6. Executar a aplicação
 
 Na raiz do projeto, execute:
-
 ```powershell
 streamlit run orthus.py
 ```
+
+Caso tenha adicionado novas bases rode antes:
+
+```powershell
+python ingest.py
+```
+
 
 O Streamlit iniciará o servidor local e exibirá um endereço no terminal, geralmente:
 
