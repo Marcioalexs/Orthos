@@ -1,0 +1,29 @@
+{
+  "versao": 1,
+  "estado": "proposta_educacional_para_revisao",
+  "conceitos": [
+    {"id":"vc_landmarks","titulo":"Landmarks e estimativa de pose","competencia":"visao","nivel":"Iniciante","documentos":["VC01"],"descricao":"Compreender pontos-chave corporais estimados por sistemas de visão computacional."},
+    {"id":"vc_limites","titulo":"Limitações da captura e confiança","competencia":"visao","nivel":"Básico","documentos":["VC02"],"descricao":"Avaliar efeitos de iluminação, enquadramento, oclusões e situações de baixa confiança."},
+    {"id":"ml_supervisionado","titulo":"Classificação e regressão","competencia":"ml","nivel":"Iniciante","documentos":["ML01"],"descricao":"Entender aprendizado supervisionado, exemplos rotulados e divisão treino/teste."},
+    {"id":"ml_validacao","titulo":"Overfitting e validação","competencia":"ml","nivel":"Intermediário","documentos":["ML02"],"descricao":"Compreender generalização, métricas, avaliação e cuidados com sobreajuste."},
+    {"id":"ag_reflexos","titulo":"Agentes reflexos e baseados em modelo","competencia":"agentes","nivel":"Iniciante","documentos":["AG01"],"descricao":"Distinguir decisão com base na percepção atual e decisão com estado interno."},
+    {"id":"ag_multi","titulo":"Agentes colaborativos","competencia":"agentes","nivel":"Intermediário","documentos":["AG02"],"descricao":"Compreender responsabilidades, contratos de dados, colaboração e tratamento de falhas."},
+    {"id":"ll_modelos","titulo":"LLMs e Transformers","competencia":"llms","nivel":"Iniciante","documentos":["LL01"],"descricao":"Entender tokens, contexto, atenção e limitações das respostas de modelos de linguagem."},
+    {"id":"ll_rag","titulo":"APIs e RAG","competencia":"llms","nivel":"Intermediário","documentos":["LL02"],"descricao":"Compreender recuperação de fontes e geração fundamentada com API protegida."}
+  ],
+  "relacoes": [
+    {"origem":"vc_landmarks","destino":"vc_limites","tipo":"prerequisito"},
+    {"origem":"ml_supervisionado","destino":"ml_validacao","tipo":"prerequisito"},
+    {"origem":"ag_reflexos","destino":"ag_multi","tipo":"prerequisito"},
+    {"origem":"ll_modelos","destino":"ll_rag","tipo":"prerequisito"},
+    {"origem":"vc_landmarks","destino":"ml_supervisionado","tipo":"relacionado"},
+    {"origem":"vc_limites","destino":"ml_validacao","tipo":"relacionado"},
+    {"origem":"ll_rag","destino":"ag_multi","tipo":"relacionado"}
+  ],
+  "quiz_conceitos": {
+    "visao": ["vc_landmarks","vc_limites","vc_landmarks","vc_landmarks","vc_limites"],
+    "ml": ["ml_supervisionado","ml_supervisionado","ml_validacao","ml_validacao","ml_validacao"],
+    "agentes": ["ag_reflexos","ag_reflexos","ag_multi","ag_multi","ag_reflexos"],
+    "llms": ["ll_rag","ll_rag","ll_modelos","ll_modelos","ll_rag"]
+  }
+}

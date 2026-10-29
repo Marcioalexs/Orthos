@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1730"><title>Mapa de Conhecimento | StudyAgent Orthos</title>
+<style>
+:root{--ink:#13233b;--muted:#63748b;--blue:#15395c;--teal:#087f77;--bg:#f4f7fb;--line:#dce5ef;--card:#fff;--soft:#e9f5f3}
+*{box-sizing:border-box}html,body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:#0a6a76}.container{max-width:1160px;margin:auto;padding:0 20px}.header{background:linear-gradient(118deg,#091a35,#15395c 70%,#117f78);color:white;padding:17px 0;position:sticky;top:0;z-index:10;box-shadow:0 3px 14px #0a183011}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:#83e7d5;font-weight:800}.header h1{font-size:clamp(19px,3vw,28px);margin:4px 0}.back{display:inline-block;border:1px solid #7296ad;border-radius:12px;padding:10px 15px;color:white;text-decoration:none;font-weight:700;font-size:14px}.back:focus-visible,.tile:focus-visible,.filter:focus-visible{outline:3px solid #16aea1;outline-offset:3px}
+main{padding:26px 0 42px}.intro{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px}.intro h2{margin:0 0 8px;font-size:22px}.intro p{color:var(--muted);line-height:1.5;margin:0}.warning{margin-top:12px;font-size:13px;color:#51677a}.tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:15px 0}.tools label{font-size:13px;font-weight:700}.filter{background:white;padding:11px 14px;border:1px solid #bdcbdb;border-radius:10px;font:inherit;color:var(--ink);max-width:100%;min-height:44px}.legend{font-size:12px;color:#53677c}.layout{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(265px,1fr);gap:20px;align-items:start}.map{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}.group{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}.group h3{font-size:16px;margin:0 0 12px}.tile{display:block;text-align:left;width:100%;background:#f4fafb;border:1px solid #c9dfdf;border-radius:12px;padding:14px 13px;cursor:pointer;font:inherit;color:var(--ink);min-height:92px;transition:.15s}.tile:hover{border-color:var(--teal);background:#eaf8f4}.tile[aria-pressed=true]{border:2px solid var(--teal);background:#e3f5f0}.tile small{display:block;margin-top:6px;color:#526b7d}.tile strong{font-size:14px}.arrow{text-align:center;color:var(--teal);font-weight:800;padding:6px 0;line-height:1}.detail{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;position:sticky;top:100px}.detail h2{font-size:20px;margin:0 0 9px}.detail p{font-size:14px;line-height:1.6;color:#495a70}.pill{display:inline-flex;padding:4px 9px;border-radius:50px;background:#dff0ec;font-weight:750;color:#075b55;font-size:12px}.detail h3{font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin:22px 0 9px}.detail ul{padding-left:20px;margin:8px 0;font-size:14px;line-height:1.7}.detail li{overflow-wrap:anywhere}.study{display:inline-block;background:var(--teal);color:white;text-decoration:none;font-weight:750;padding:12px 15px;border-radius:10px;margin-top:12px}.sources a{display:block;overflow-wrap:anywhere;margin:6px 0;font-size:13px}.status{color:#63748b;font-size:13px;margin:14px 0}.error{padding:14px;border-radius:11px;background:#fff0f1;color:#922732}.related{margin-top:20px;background:#eaf4fa;padding:14px;border-radius:12px;font-size:13px;line-height:1.5}.related strong{display:block;margin-bottom:4px}footer{color:#687b8e;font-size:12px;padding:10px 0 30px}
+@media(max-width:790px){.layout{grid-template-columns:1fr}.detail{position:static}.map{grid-template-columns:1fr}.group{padding:14px}.header{position:sticky}.header .container{padding:0 14px}main{padding:16px 0 26px}.container{padding:0 14px}.tile{min-height:72px}.top .back{font-size:12px;padding:8px 10px}}
+@media(min-width:791px) and (max-width:1000px){.map{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="header"><div class="container top"><div><div class="eyebrow">RESIDÊNCIA TECNOLÓGICA EM IA · EQUIPE ORTHOS</div><h1>🧠 Mapa de Conhecimento</h1></div><a class="back" href="/">← Voltar ao StudyAgent</a></div></header>
+<main class="container">
+<section class="intro"><h2>Como os conceitos se conectam?</h2><p>Explore as quatro competências, selecione um conceito e veja os materiais e pré-requisitos sugeridos. Os relacionamentos são uma proposta pedagógica da equipe, não uma avaliação automática de domínio.</p><div class="warning">✅ Mapa e trilhas funcionam mesmo sem conexão com o modelo de IA.</div></section>
+<div class="tools"><label for="competencia">Filtrar competência: <select class="filter" id="competencia"><option value="">Todas as competências</option></select></label><span class="legend">↓ Pré-requisito sugerido · ⇄ Conceito relacionado</span></div>
+<div class="layout"><div><div id="mapa" class="map" aria-label="Grafo de conceitos"></div><div id="relacoes" class="related" hidden></div></div><aside id="detalhes" class="detail" aria-live="polite"><h2>Selecione um conceito</h2><p>Toque em um cartão para consultar a descrição, os pré-requisitos, as referências e uma trilha de aprendizagem.</p></aside></div>
+<div class="status" id="status">Carregando conceitos…</div>
+</main>
+<footer class="container">Orthos · Challenge 2 · MVP educacional. Conexões propostas para validação pela equipe.</footer>
+<script>
+'use strict';
+const el=id=>document.getElementById(id);
+let graph=null,selected=null;
+const byId=id=>graph.conceitos.find(x=>x.id===id);
+function put(parent,tag,content,css){const x=document.createElement(tag);if(content!==undefined)x.textContent=content;if(css)x.className=css;parent.append(x);return x}
+function listNames(ids){return ids.map(id=>byId(id)?.titulo).filter(Boolean).join(' · ')}
+function choose(id){selected=id;render();const c=byId(id);const target=el('detalhes');target.replaceChildren();put(target,'span',c.nivel,'pill');put(target,'h2',c.titulo);put(target,'p',c.descricao);
+  if(c.prerequisitos.length){put(target,'h3','Pré-requisitos sugeridos');const ul=put(target,'ul');for(const x of c.prerequisitos)put(ul,'li',byId(x).titulo)}
+  if(c.relacionados.length){put(target,'h3','Conexões com outros assuntos');const ul=put(target,'ul');for(const x of c.relacionados)put(ul,'li',byId(x).titulo)}
+  put(target,'h3','Material de estudo');put(target,'p',c.documentos.join(', ')+' · '+c.questoes+' questão(ões) relacionada(s)');
+  put(target,'h3','Fontes dos materiais');const sources=put(target,'div',undefined,'sources');const seen=new Set();for(const src of c.fontes){if(seen.has(src.id))continue;seen.add(src.id);const a=put(sources,'a',src.titulo+' — '+src.autor);a.href=src.url;a.target='_blank';a.rel='noopener noreferrer'}
+  const a=put(target,'a','Estudar este assunto →','study');a.href='/?competencia='+encodeURIComponent(c.competencia)+'&pergunta='+encodeURIComponent('Explique '+c.titulo+' com base nas referências disponíveis.');
+  if(matchMedia('(max-width:790px)').matches)target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function render(){const filter=el('competencia').value,root=el('mapa');root.replaceChildren();const competences=Object.entries(graph.competencias).filter(([id])=>!filter||filter===id);
+  for(const [id,title] of competences){const section=put(root,'section',undefined,'group');put(section,'h3',title);const concepts=graph.conceitos.filter(c=>c.competencia===id);
+    for(let i=0;i<concepts.length;i++){const c=concepts[i];if(i){const preceding=concepts[i-1];if(c.prerequisitos.includes(preceding.id))put(section,'div','↓  pré-requisito','arrow');else put(section,'div','⇄','arrow')}
+      const button=put(section,'button',undefined,'tile');button.type='button';button.setAttribute('aria-pressed',String(selected===c.id));put(button,'strong',c.titulo);put(button,'small',c.nivel+' · '+c.documentos.join(', '));button.onclick=()=>choose(c.id);
+    }
+  }
+  const related=graph.relacoes.filter(e=>e.tipo==='relacionado'&&(!filter||byId(e.origem).competencia===filter||byId(e.destino).competencia===filter));const area=el('relacoes');area.replaceChildren();area.hidden=!related.length;if(related.length){put(area,'strong','Conexões entre competências (⇄)');for(const r of related)put(area,'div',byId(r.origem).titulo+' ↔ '+byId(r.destino).titulo)}
+}
+async function start(){try{const response=await fetch('/api/grafo');if(!response.ok)throw Error('HTTP '+response.status);graph=await response.json();if(!Array.isArray(graph.conceitos))throw Error('Estrutura inválida');
+  for(const [id,name] of Object.entries(graph.competencias)){const option=document.createElement('option');option.value=id;option.textContent=name;el('competencia').append(option)}
+  el('competencia').onchange=()=>render();render();const params=new URLSearchParams(location.search);const selectedFromUrl=params.get('conceito');if(selectedFromUrl&&byId(selectedFromUrl))choose(selectedFromUrl);el('status').textContent=graph.conceitos.length+' conceitos · '+graph.relacoes.length+' conexões · conteúdos em revisão pedagógica';
+}catch(err){el('status').className='status error';el('status').textContent='Não foi possível carregar o grafo: '+err.message}}
+start();
+</script>
+</body>
+</html>
